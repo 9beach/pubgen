@@ -1,7 +1,7 @@
 # Pubgen
 
 Pubgen is a simple command-line based epub generator. With the simple YAML 
-file, Pubgen generate the epub file for you. 
+file, Pubgen generate the epub for you. 
 
 ## Installation
 
@@ -14,7 +14,7 @@ $ gem install pubgen
 
 ```bash
 $ pubgen -h
-pubgen 0.1.0, a epub generator.
+pubgen 0.1.2, a epub generator. (http://github.com/9beach/pubgen)
 
 Usage:
   pubgen <yaml file> [-o <epub file>] [-v]
@@ -28,8 +28,8 @@ Usage:
 ## Quick Start
  
 Prepare files (documents, images, style sheets, etc.) that make up the 
-publication. iBooks requires strict xhtml format, 
-[`tidy -asxhtml`] (http://tidy.sourceforge.net/) will be helpful.
+publication. iBooks requires strict xhtml. [`tidy -asxhtml`] 
+(http://tidy.sourceforge.net/) will be helpful.
 
 ```bash
 $ find .
@@ -46,14 +46,14 @@ $ find .
 ./images/cover.jpg
 ./style.css
 ```
-Create the YAML file describing your publication. As a example, 
+
+Create the utf-8 encoded YAML file describing the publication. As a example, 
 `will_oldham.yml`.
 
 ```yaml
 # METADATA: Publication metadata (title, author, publisher, etc.).
 #
 # See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.2
-# -*- encoding: utf-8 -*-
 metadata:
   title: "Will Oldham: Wikipedia, the free encyclopedia"
   creator: Wikipedia
@@ -71,18 +71,22 @@ metadata:
 # publication, such as table of contents, foreword, bibliography, etc.
 #
 # See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.6
+#
+# If you provide cover-image without cover-page, pubgen automatically 
+# generate cover-page xhtml, and add it to manifest and spine
 guide:
   toc-page:
   title-page: 
-# If you provide cover-image without cover-page, pubgen automatically 
-# generate cover-page xhtml, and add it to manifest and spine
   cover-image: images/cover.jpg
   cover-page:
 
 # MANIFEST: A list of files (documents, images, style sheets, etc.) that make 
 # up the publication.
 #
-# All the files in manifest ought to be in the same or sub-directory of yaml.
+# See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.3
+#
+# All the file paths in manifest ought to be relative to yaml and in the same 
+# or sub-directory of yaml.
 # Say yaml's path is /book/a.yaml.
 # - a/b/c.html                # good. in the sub-directory
 # - d.jpg                     # good. in the same directory
@@ -103,6 +107,8 @@ manifest:
   - style.css
 
 # SPINE: An arrangement of documents providing a linear reading order.
+#
+# See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.4
 spine:
   - contents/a.html
   - contents/a-1.html
@@ -110,11 +116,19 @@ spine:
   - contents/b.html
 
 # TOC: Table of contents
+#
+# See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.4.1
 toc:
-  - Music -- contents/a.html:   # don't forget colon to indent
-    - Discography -- contents/a-1.html
-    - Response -- contents/a-2.html
-  - Film -- contents/b.html
+# don't forget the colon to add sub items
+  - 1 Music -- contents/a.html:
+    - 1.1 Discography -- contents/a-1.html: 
+      - 1.1.1 Studio albums -- contents/a-1.html#studio_albums
+    - 1.2 Response -- contents/a-2.html
+  - 2 Film -- contents/b.html:
+    - 2.1 Filmography -- contents/b.html#filmography
+  - 3 Photography -- contents/b.html#photography
+  - 4 References -- contents/b.html#references
+  - 5 External links -- contents/b.html#external_links
 ```
 
 Run pubgen.
@@ -138,8 +152,10 @@ cat > cover-pubgen.xhtml
 cat > content.opf
 cat > toc.ncx
 zip > pubgen.epub
-cd /path/to/pwd
-mv .pubgen-4f4a210e /pubgen.epub 'Will Oldham_ Wikipedia, the free encyclopedia.epub'
+cd /path/to/prev_dir
+mv .pubgen-4f4a210e/pubgen.epub 'Will Oldham_ Wikipedia, the free encyclopedia.epub'
 rm -rf .pubgen-4f4a210e
 # Successfully generated 'Will Oldham_ Wikipedia, the free encyclopedia.epub'
 ```
+
+Done!

@@ -78,7 +78,7 @@ EOF
 
         manifest.each do |path|
           if OPF.valid_manifest_element?(path) == false
-            raise "One of manifest element (" + path + ") is not in sub-directory of yaml file"
+            raise "A manifest file, #{path} is not in sub-directory of yaml file"
           end
           id = "i%03d" % no
           manifest_xml += "    <item id=\"#{id}\" href=\"#{path}\" media-type=\"#{guess_media_type(path)}\"/>\n"
@@ -91,7 +91,7 @@ EOF
         end
 
         if cover_path && cover_id == nil
-          raise "Can't find cover-image from manifest" 
+          raise "Failed to find cover-image from manifest" 
         end
 
         manifest_xml += "    <item id=\"ncx\" href=\"#{NCX_PATH}\" media-type=\"application/x-dtbncx+xml\"/>\n  </manifest>\n"
@@ -126,7 +126,7 @@ EOF
         cover_page = guide['cover-page']
         if cover_page != nil
           if file2id[cover_page] == nil
-            raise "Can't find cover-page from manifest" 
+            raise "Failed to find cover-page from manifest" 
           else
             guide_xml += "    <reference href=\"%s\" type=\"cover\" title=\"Cover\"/>\n" % cover_page
           end
@@ -134,7 +134,7 @@ EOF
         toc_page =  guide['toc-page']
         if toc_page != nil
           if file2id[toc_page] == nil
-            raise "Can't find toc-page from manifest" 
+            raise "Failed to find toc-page from manifest" 
           else
             guide_xml += "    <reference href=\"%s\" type=\"toc\" title=\"Table of Contents\"/>\n" % toc_page
           end
@@ -142,7 +142,7 @@ EOF
         title_page =  guide['title-page']
         if title_page != nil
           if file2id[title_page] == nil
-            raise "Can't find title-page from manifest" 
+            raise "Failed to find title-page from manifest" 
           else
             guide_xml += "    <reference href=\"%s\" type=\"title-page\" title=\"Title Page\"/>\n" % toc_page
           end
@@ -156,7 +156,7 @@ EOF
           if file2id[path] != nil
             spine_xml += "    <itemref idref=\"#{file2id[path]}\"/>\n"
           else
-            raise "Can't find spine element `#{path}' from manifest"
+            raise "Failed to find spine element `#{path}' from manifest"
           end
         end
         spine_xml += "  </spine>\n"

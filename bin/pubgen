@@ -183,7 +183,7 @@ begin
     Dir.chdir($pwd_old)
     pubgen_log("cd " + $pwd_old, options[:verbose])
     FileUtils.mv($tmpdir + "/pubgen.epub", options[:epub_path])
-    pubgen_log("mv #{$tmpdir} /pubgen.epub '#{options[:epub_path]}'", options[:verbose])
+    pubgen_log("mv #{$tmpdir}/pubgen.epub '#{options[:epub_path]}'", options[:verbose])
   end
 rescue Exception=>e
   $exit_code = 1
