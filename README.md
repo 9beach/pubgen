@@ -28,8 +28,8 @@ Usage:
 ## Quick Start
  
 Prepare files (documents, images, style sheets, etc.) that make up the 
-publication. iBooks requires strict xhtml format, [`tidy -asxhtml`]
-(http://tidy.sourceforge.net/) will be helpful.
+publication. iBooks requires strict xhtml format, 
+[`tidy -asxhtml`] (http://tidy.sourceforge.net/) will be helpful.
 
 ```bash
 $ find .
@@ -53,6 +53,7 @@ Create the YAML file describing your publication. As a example,
 # METADATA: Publication metadata (title, author, publisher, etc.).
 #
 # See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.2
+# -*- encoding: utf-8 -*-
 metadata:
   title: "Will Oldham: Wikipedia, the free encyclopedia"
   creator: Wikipedia
