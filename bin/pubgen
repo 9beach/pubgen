@@ -1,0 +1,211 @@
+#!/usr/bin/env ruby
+
+PACKAGE = 'pubgen'
+VERSION = '0.1.0'
+
+require 'yaml'
+require 'fileutils'
+require 'optparse'
+
+require 'zipruby'
+
+$:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
+require 'pubgen'
+
+HELP = <<EOF
+#{PACKAGE} #{VERSION}, a epub generator.
+
+Usage:
+  #{PACKAGE} <yaml file> [-o <epub file>] [-v]
+  #{PACKAGE} <yaml file> -m
+
+EOF
+
+options = {}
+opts = OptionParser.new do |opts|
+  opts.banner = HELP
+
+  opts.on('-o', '--output EPUB_PATH', 'Specify output epub file path') do |epub_path|
+    options[:epub_path] = epub_path
+  end
+
+  opts.on('-m', '--meta-file-only', 'Generate .opf, .ncx, mimetype, ...') do |m|
+    options[:meta_file_only] = m
+  end
+
+  opts.on('-v', '--verbose', 'Verbose output') do |v|
+    options[:verbose] = v
+  end
+end
+opts.parse!(ARGV)
+
+# check options validity
+if (options[:meta_file_only] == true && options[:epub_path] != nil)
+  $stderr << <<EOF
+#{PACKAGE}: `--meta-file-only' with `--output EPUB_PATH', not allowed
+
+Try `#{PACKAGE} -h' for more informations
+EOF
+  exit 1
+end
+
+if ARGV.size != 1
+  $stderr << <<EOF
+#{PACKAGE}: specify one yaml file
+
+Try `#{PACKAGE} -h' for more informations
+EOF
+  exit 1
+else
+  options[:yaml_path] = ARGV[0]
+end
+
+begin
+  yaml = YAML::load File.open(options[:yaml_path])
+rescue Exception=>e
+  pubgen_err("While loading yaml: " + e.to_s)
+  exit 1
+end
+
+if yaml['metadata']['title'] == nil
+  pubgen_err("Failed to find the value of 'title' attribute in: " + options[:yaml_path])
+  exit 1
+end
+
+# if `--output EPUB_PATH' is not given. get it from yaml
+if !options[:meta_file_only] && !options[:epub_path]
+  options[:epub_path] = yaml['metadata']['title'] + ".epub"
+  options[:epub_path].gsub!(/[\/:?]/, "_") # file-system friendly
+end
+# now, options done
+
+# just for one line
+def pubgen_log(log, verbose = true)
+  $stdout << log + "\n" if verbose
+end
+
+# just for one line
+def pubgen_err(err)
+  $stderr << '# ' + err + "\n"
+end
+
+yaml['metadata']['creator'] = "#{PACKAGE}-#{VERSION}" if yaml['metadata']['creator'] == nil
+yaml['metadata']['contributor'] = "#{PACKAGE}-#{VERSION}" if yaml['metadata']['contributor'] == nil
+
+$tmpdir = ""
+$pwd_old = Dir.pwd
+$exit_code = 0
+
+begin
+  if !options[:meta_file_only]
+    # we need temporal working directory
+    $tmpdir = ".pubgen-%08x" % Time.now.to_i 
+    Dir.mkdir($tmpdir)
+    pubgen_log("mkdir " + $tmpdir, options[:verbose])
+
+    # copy all files of manifest to $tmpdir
+    yaml['manifest'].each do |file|
+      if Pubgen::OPF.valid_manifest_element?(file) == false
+        raise "Invalid manifest (not in sub-directory of yaml file): " + file
+      end
+      target_dir = "#{$tmpdir}/#{File.dirname(file)}"
+      FileUtils.mkdir_p(target_dir)
+      FileUtils.cp("#{File.dirname(options[:yaml_path])}/#{file}", target_dir, :verbose=>options[:verbose])
+    end
+
+    # change pwd
+    Dir.chdir($tmpdir)
+    pubgen_log("cd " + $tmpdir, options[:verbose])
+  end
+
+  # generate container.xml 
+  # it's name and path are fixed (META-INF/container.xml)
+  Dir.mkdir('META-INF') if !File::directory?('META-INF')
+  container = File.new('META-INF/container.xml', 'w')
+  container.write(Pubgen::Container.generate)
+  container.close
+  pubgen_log('cat > META-INF/container.xml', options[:meta_file_only] || options[:verbose])
+
+  # generate mimetype
+  # it's name and path are also fixed (./mimetype)
+  mimetype = File.new('mimetype', 'w')
+  mimetype.write('application/epub+zip')
+  mimetype.close
+  pubgen_log('cat > mimetype', options[:meta_file_only] || options[:verbose])
+
+  # pubgen automatically generates cover page if cover-image is given without 
+  # cover-page
+  if Pubgen::CoverPage.need_to_generate?(yaml['guide'])
+    COVER_PAGE_PATH = 'cover-pubgen.xhtml'
+    cover_page = File.new(COVER_PAGE_PATH, 'w')
+    cover_page.write(Pubgen::CoverPage.generate(yaml['guide']['cover-image']))
+    cover_page.close
+    pubgen_log("cat > " + COVER_PAGE_PATH, options[:meta_file_only] || options[:verbose])
+
+    # add/set it to manifest, spine, and cover-page
+    yaml['manifest'] << COVER_PAGE_PATH
+    yaml['spine'].unshift(COVER_PAGE_PATH)
+    yaml['guide']['cover-page'] = COVER_PAGE_PATH
+  end
+
+  # generate uuid
+  uuid = "%08x" % Time.now.to_i + "-" + [4,4,4,12].map {|l| "%0#{l}x" % rand(1 << l*4) }.join('-')
+  # require 'uuid'
+  # uuid = UUID.new.generate
+
+  # generate opf file
+  opf = File.new(Pubgen::Container.opf_path, 'w')
+  opf.write(Pubgen::OPF.generate(yaml, uuid))
+  opf.close
+  pubgen_log("cat > " + Pubgen::Container.opf_path, options[:meta_file_only] || options[:verbose])
+  # pubgen automatically added ncx file to opf's manifest (but not to yaml[]'s)
+
+  # generate ncx file
+  ncx = File.new(Pubgen::OPF.ncx_path, 'w')
+  ncx.write(Pubgen::NCX.generate(yaml['metadata']['title'], yaml['toc'], uuid))
+  ncx.close
+  pubgen_log("cat > " + Pubgen::OPF.ncx_path, options[:meta_file_only] || options[:verbose])
+
+  # generate epub
+  if !options[:meta_file_only]
+    Zip::Archive.open("pubgen.epub", Zip::CREATE | Zip::TRUNC) do |ar|
+      Dir.glob('**/*').each do |path|
+        if File.directory?(path)
+          ar.add_dir(path)
+        else
+          ar.add_file(path, path)
+        end
+      end
+    end
+    pubgen_log("zip > pubgen.epub", options[:verbose])
+
+    # mv pubgen.epub to options[:epub_path]
+    Dir.chdir($pwd_old)
+    pubgen_log("cd " + $pwd_old, options[:verbose])
+    FileUtils.mv($tmpdir + "/pubgen.epub", options[:epub_path])
+    pubgen_log("mv #{$tmpdir} /pubgen.epub '#{options[:epub_path]}'", options[:verbose])
+  end
+rescue Exception=>e
+  $exit_code = 1
+  pubgen_err(e.to_s)
+ensure
+  # remove $tmpdir
+  if Dir.pwd != $pwd_old
+    Dir.chdir($pwd_old)
+    pubgen_log("cd " + $pwd_old, options[:verbose])
+  end
+  if File::directory?($tmpdir)
+    FileUtils.rm_rf($tmpdir)
+    pubgen_log("rm -rf " + $tmpdir, options[:verbose])
+  end
+end
+
+if $exit_code == 0 && !options[:meta_file_only]
+  if options[:verbose]
+    pubgen_log("# Successfully generated '#{options[:epub_path]}'")
+  else
+    pubgen_log("zip > '#{options[:epub_path]}'")
+  end
+end
+
+exit $exit_code
