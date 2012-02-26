@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-PACKAGE = 'pubgen'
-VERSION = '0.1.2'
+PUBGEN_PACKAGE = 'pubgen'
+PUBGEN_VERSION = '0.1.2'
 
 require 'yaml'
 require 'fileutils'
@@ -13,11 +13,11 @@ $:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
 require 'pubgen'
 
 HELP = <<EOF
-#{PACKAGE} #{VERSION}, a epub generator. (http://github.com/9beach/pubgen)
+#{PUBGEN_PACKAGE} #{PUBGEN_VERSION}, a epub generator. (http://github.com/9beach/pubgen)
 
 Usage:
-  #{PACKAGE} <yaml file> [-o <epub file>] [-v]
-  #{PACKAGE} <yaml file> -m
+  #{PUBGEN_PACKAGE} <yaml file> [-o <epub file>] [-v]
+  #{PUBGEN_PACKAGE} <yaml file> -m
 
 EOF
 
@@ -42,18 +42,18 @@ opts.parse!(ARGV)
 # check options validity
 if (options[:meta_file_only] == true && options[:epub_path] != nil)
   $stderr << <<EOF
-#{PACKAGE}: `--meta-file-only' with `--output EPUB_PATH', not allowed
+#{PUBGEN_PACKAGE}: `--meta-file-only' with `--output EPUB_PATH', not allowed
 
-Try `#{PACKAGE} -h' for more informations
+Try `#{PUBGEN_PACKAGE} -h' for more informations
 EOF
   exit 1
 end
 
 if ARGV.size != 1
   $stderr << <<EOF
-#{PACKAGE}: specify a yaml file
+#{PUBGEN_PACKAGE}: specify a yaml file
 
-Try `#{PACKAGE} -h' for more informations
+Try `#{PUBGEN_PACKAGE} -h' for more informations
 EOF
   exit 1
 else
@@ -89,8 +89,8 @@ def pubgen_err(err)
   $stderr << '# ' + err + "\n"
 end
 
-yaml['metadata']['creator'] = "#{PACKAGE}-#{VERSION}" if yaml['metadata']['creator'] == nil
-yaml['metadata']['contributor'] = "#{PACKAGE}-#{VERSION}" if yaml['metadata']['contributor'] == nil
+yaml['metadata']['creator'] = "#{PUBGEN_PACKAGE}-#{PUBGEN_VERSION}" if yaml['metadata']['creator'] == nil
+yaml['metadata']['contributor'] = "#{PUBGEN_PACKAGE}-#{PUBGEN_VERSION}" if yaml['metadata']['contributor'] == nil
 
 $tmpdir = ""
 $pwd_old = Dir.pwd
