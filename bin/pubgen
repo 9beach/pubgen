@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 PACKAGE = 'pubgen'
-VERSION = '0.1.0'
+VERSION = '0.1.1'
 
 require 'yaml'
 require 'fileutils'
@@ -51,7 +51,7 @@ end
 
 if ARGV.size != 1
   $stderr << <<EOF
-#{PACKAGE}: specify one yaml file
+#{PACKAGE}: specify a yaml file
 
 Try `#{PACKAGE} -h' for more informations
 EOF
