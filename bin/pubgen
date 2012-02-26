@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 PACKAGE = 'pubgen'
-VERSION = '0.1.1'
+VERSION = '0.1.2'
 
 require 'yaml'
 require 'fileutils'
@@ -13,7 +13,7 @@ $:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
 require 'pubgen'
 
 HELP = <<EOF
-#{PACKAGE} #{VERSION}, a epub generator.
+#{PACKAGE} #{VERSION}, a epub generator. (http://github.com/9beach/pubgen)
 
 Usage:
   #{PACKAGE} <yaml file> [-o <epub file>] [-v]
