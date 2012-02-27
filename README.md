@@ -1,7 +1,7 @@
 # Pubgen
 
-Pubgen is a simple command-line based epub generator. With the simple YAML 
-file, Pubgen generate the epub for you. 
+Pubgen is a simple command-line based epub generator. With a plain YAML, Pubgen
+generate the epub for you. 
 
 ## Installation
 
@@ -14,7 +14,7 @@ $ gem install pubgen
 
 ```bash
 $ pubgen -h
-pubgen 0.1.2, a epub generator. (http://github.com/9beach/pubgen)
+pubgen, a epub generator. (http://github.com/9beach/pubgen)
 
 Usage:
   pubgen <yaml file> [-o <epub file>] [-v]
@@ -35,8 +35,6 @@ publication. iBooks requires strict xhtml. [`tidy -asxhtml`]
 $ find .
 .
 ./contents
-./contents/a-1.html
-./contents/a-2.html
 ./contents/a.html
 ./contents/b.html
 ./images
@@ -61,7 +59,7 @@ metadata:
   language: en
   subject: American alternative country singers
   publisher:
-  contrubuter:
+  contributor:
   description:
   source: "http://en.wikipedia.org/wiki/Will_Oldham"
   rights:
@@ -77,17 +75,16 @@ metadata:
 guide:
   toc-page:
   title-page: 
-  cover-image: images/cover.jpg
   cover-page:
+  cover-image: images/cover.jpg
 
 # MANIFEST: A list of files (documents, images, style sheets, etc.) that make 
 # up the publication.
 #
 # See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.3
 #
-# All the file paths in manifest ought to be relative to yaml and in the same 
-# or sub-directory of yaml.
-# Say yaml's path is /book/a.yaml.
+# All the file paths in manifest ought to be relative to yaml's path and in the
+# same or sub-directory of yaml. Say yaml's path is /book/a.yaml.
 # - a/b/c.html                # good. in the sub-directory
 # - d.jpg                     # good. in the same directory
 # - ./e.jpg                   # good. in the same directory
@@ -97,8 +94,6 @@ guide:
 # - ../book/f.png             # bad. although in the same directory
 manifest:
   - contents/a.html
-  - contents/a-1.html
-  - contents/a-2.html
   - contents/b.html
   - images/cover.jpg
   - images/1.jpg
@@ -111,19 +106,17 @@ manifest:
 # See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.4
 spine:
   - contents/a.html
-  - contents/a-1.html
-  - contents/a-2.html
   - contents/b.html
 
 # TOC: Table of contents
 #
 # See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.4.1
 toc:
-# don't forget the colon to add sub items
+# Don't forget the colon prefix to add sub items
   - 1 Music -- contents/a.html:
-    - 1.1 Discography -- contents/a-1.html: 
-      - 1.1.1 Studio albums -- contents/a-1.html#studio_albums
-    - 1.2 Response -- contents/a-2.html
+    - 1.1 Discography -- contents/a.html#discography: 
+      - 1.1.1 Studio albums -- contents/a.html#studio_albums
+    - 1.2 Response -- contents/a.html#response
   - 2 Film -- contents/b.html:
     - 2.1 Filmography -- contents/b.html#filmography
   - 3 Photography -- contents/b.html#photography
@@ -137,8 +130,6 @@ Run pubgen.
 $ pubgen /path/to/will_oldham.yml -v
 mkdir .pubgen-4f4a210e
 cp ./contents/a.html .pubgen-4f4a210e/contents
-cp ./contents/a-1.html .pubgen-4f4a210e/contents
-cp ./contents/a-2.html .pubgen-4f4a210e/contents
 cp ./contents/b.html .pubgen-4f4a210e/contents
 cp ./images/cover.jpg .pubgen-4f4a210e/images
 cp ./images/1.jpg .pubgen-4f4a210e/images

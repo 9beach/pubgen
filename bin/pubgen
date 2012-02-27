@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby
 
-PUBGEN_PACKAGE = 'pubgen'
-PUBGEN_VERSION = '0.1.2'
-
 require 'yaml'
 require 'fileutils'
 require 'optparse'
@@ -13,11 +10,11 @@ $:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
 require 'pubgen'
 
 HELP = <<EOF
-#{PUBGEN_PACKAGE} #{PUBGEN_VERSION}, a epub generator. (http://github.com/9beach/pubgen)
+pubgen #{Pubgen::VERSION}, a epub generator. (http://github.com/9beach/pubgen)
 
 Usage:
-  #{PUBGEN_PACKAGE} <yaml file> [-o <epub file>] [-v]
-  #{PUBGEN_PACKAGE} <yaml file> -m
+  pubgen <yaml file> [-o <epub file>] [-v]
+  pubgen <yaml file> -m
 
 EOF
 
@@ -42,18 +39,18 @@ opts.parse!(ARGV)
 # check options validity
 if (options[:meta_file_only] == true && options[:epub_path] != nil)
   $stderr << <<EOF
-#{PUBGEN_PACKAGE}: `--meta-file-only' with `--output EPUB_PATH', not allowed
+pubgen: `--meta-file-only' with `--output EPUB_PATH', not allowed
 
-Try `#{PUBGEN_PACKAGE} -h' for more informations
+Try `pubgen -h' for more informations
 EOF
   exit 1
 end
 
 if ARGV.size != 1
   $stderr << <<EOF
-#{PUBGEN_PACKAGE}: specify a yaml file
+pubgen: specify a yaml file
 
-Try `#{PUBGEN_PACKAGE} -h' for more informations
+Try `pubgen -h' for more informations
 EOF
   exit 1
 else
@@ -68,7 +65,8 @@ rescue Exception=>e
 end
 
 if yaml['metadata']['title'] == nil
-  pubgen_err("Failed to find the value of 'title' attribute in: " + options[:yaml_path])
+  pubgen_err("Failed to find the value of 'title' attribute in: " + 
+             options[:yaml_path])
   exit 1
 end
 
@@ -79,18 +77,21 @@ if !options[:meta_file_only] && !options[:epub_path]
 end
 # now, options done
 
-# just for one line
+# just for one line log
 def pubgen_log(log, verbose = true)
   $stdout << log + "\n" if verbose
 end
 
-# just for one line
 def pubgen_err(err)
   $stderr << '# ' + err + "\n"
 end
 
-yaml['metadata']['creator'] = "#{PUBGEN_PACKAGE}-#{PUBGEN_VERSION}" if yaml['metadata']['creator'] == nil
-yaml['metadata']['contributor'] = "#{PUBGEN_PACKAGE}-#{PUBGEN_VERSION}" if yaml['metadata']['contributor'] == nil
+if yaml['metadata']['creator'] == nil
+  yaml['metadata']['creator'] = "pubgen-#{Pubgen::VERSION}" 
+end
+if yaml['metadata']['contributor'] == nil
+  yaml['metadata']['contributor'] = "pubgen-#{Pubgen::VERSION}"
+end
 
 $tmpdir = ""
 $pwd_old = Dir.pwd
@@ -110,7 +111,8 @@ begin
       end
       target_dir = "#{$tmpdir}/#{File.dirname(file)}"
       FileUtils.mkdir_p(target_dir)
-      FileUtils.cp("#{File.dirname(options[:yaml_path])}/#{file}", target_dir, :verbose=>options[:verbose])
+      FileUtils.cp("#{File.dirname(options[:yaml_path])}/#{file}", 
+                   target_dir, :verbose=>options[:verbose])
     end
 
     # change pwd
@@ -124,7 +126,8 @@ begin
   container = File.new('META-INF/container.xml', 'w')
   container.write(Pubgen::Container.generate)
   container.close
-  pubgen_log('cat > META-INF/container.xml', options[:meta_file_only] || options[:verbose])
+  pubgen_log('cat > META-INF/container.xml', 
+             options[:meta_file_only] || options[:verbose])
 
   # generate mimetype
   # it's name and path are also fixed (./mimetype)
@@ -135,12 +138,13 @@ begin
 
   # pubgen automatically generates cover page if cover-image is given without 
   # cover-page
-  if Pubgen::CoverPage.need_to_generate?(yaml['guide'])
+  if yaml['guide']['cover-image'] != nil && yaml['guide']['cover-page'] == nil
     COVER_PAGE_PATH = 'cover-pubgen.xhtml'
     cover_page = File.new(COVER_PAGE_PATH, 'w')
     cover_page.write(Pubgen::CoverPage.generate(yaml['guide']['cover-image']))
     cover_page.close
-    pubgen_log("cat > " + COVER_PAGE_PATH, options[:meta_file_only] || options[:verbose])
+    pubgen_log("cat > " + COVER_PAGE_PATH, 
+               options[:meta_file_only] || options[:verbose])
 
     # add/set it to manifest, spine, and cover-page
     yaml['manifest'] << COVER_PAGE_PATH
@@ -149,7 +153,8 @@ begin
   end
 
   # generate uuid
-  uuid = "%08x" % Time.now.to_i + "-" + [4,4,4,12].map {|l| "%0#{l}x" % rand(1 << l*4) }.join('-')
+  uuid = "%08x-" % Time.now.to_i + 
+            [4,4,4,12].map {|l| "%0#{l}x" % rand(1 << l*4) }.join('-')
   # require 'uuid'
   # uuid = UUID.new.generate
 
@@ -157,14 +162,16 @@ begin
   opf = File.new(Pubgen::Container.opf_path, 'w')
   opf.write(Pubgen::OPF.generate(yaml, uuid))
   opf.close
-  pubgen_log("cat > " + Pubgen::Container.opf_path, options[:meta_file_only] || options[:verbose])
+  pubgen_log("cat > " + Pubgen::Container.opf_path, 
+             options[:meta_file_only] || options[:verbose])
   # pubgen automatically added ncx file to opf's manifest (but not to yaml[]'s)
 
   # generate ncx file
   ncx = File.new(Pubgen::OPF.ncx_path, 'w')
   ncx.write(Pubgen::NCX.generate(yaml['metadata']['title'], yaml['toc'], uuid))
   ncx.close
-  pubgen_log("cat > " + Pubgen::OPF.ncx_path, options[:meta_file_only] || options[:verbose])
+  pubgen_log("cat > " + Pubgen::OPF.ncx_path, 
+             options[:meta_file_only] || options[:verbose])
 
   # generate epub
   if !options[:meta_file_only]
@@ -183,7 +190,8 @@ begin
     Dir.chdir($pwd_old)
     pubgen_log("cd " + $pwd_old, options[:verbose])
     FileUtils.mv($tmpdir + "/pubgen.epub", options[:epub_path])
-    pubgen_log("mv #{$tmpdir}/pubgen.epub '#{options[:epub_path]}'", options[:verbose])
+    pubgen_log("mv #{$tmpdir}/pubgen.epub '#{options[:epub_path]}'", 
+               options[:verbose])
   end
 rescue Exception=>e
   $exit_code = 1

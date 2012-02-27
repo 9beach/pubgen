@@ -1,9 +1,5 @@
 module Pubgen
   module CoverPage
-    def self.need_to_generate?(guide)
-      guide['cover-image'] != nil && guide['cover-page'] == nil
-    end
-
     def self.generate(cover_image)
       <<EOF
 <?xml version='1.0' encoding='utf-8'?>
@@ -19,7 +15,9 @@ module Pubgen
   </head>
   <body>
     <div>
-      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="100%" height="100%" viewBox="0 0 469 616" preserveAspectRatio="xMinYMin">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/\
+1999/xlink" version="1.1" width="100%" height="100%" viewBox="0 0 469 616" \
+preserveAspectRatio="xMinYMin">
         <image width="469" height="616" xlink:href="#{cover_image}"/>
       </svg>
     </div>
