@@ -1,7 +1,7 @@
 # Pubgen
 
-Pubgen is a simple command-line based epub generator. With a plain YAML, Pubgen
-generate the epub for you. 
+Pubgen is a command-line based epub generator. With a simple YAML, Pubgen make 
+a epub for you. 
 
 ## Installation
 

@@ -75,7 +75,7 @@ if !options[:meta_file_only] && !options[:epub_path]
   options[:epub_path] = yaml['metadata']['title'] + ".epub"
   options[:epub_path].gsub!(/[\/:?]/, "_") # file-system friendly
 end
-# now, options done
+# options done
 
 # just for one line log
 def pubgen_log(log, verbose = true)
@@ -99,12 +99,12 @@ $exit_code = 0
 
 begin
   if !options[:meta_file_only]
-    # we need temporal working directory
+    # temporal working directory
     $tmpdir = ".pubgen-%08x" % Time.now.to_i 
     Dir.mkdir($tmpdir)
     pubgen_log("mkdir " + $tmpdir, options[:verbose])
 
-    # copy all files of manifest to $tmpdir
+    # copy all the files of manifest to $tmpdir
     yaml['manifest'].each do |file|
       if Pubgen::OPF.valid_manifest_element?(file) == false
         raise "Invalid manifest (not in sub-directory of yaml file): " + file
@@ -121,7 +121,7 @@ begin
   end
 
   # generate container.xml 
-  # it's name and path are fixed (META-INF/container.xml)
+  # it's path is fixed (META-INF/container.xml)
   Dir.mkdir('META-INF') if !File::directory?('META-INF')
   container = File.new('META-INF/container.xml', 'w')
   container.write(Pubgen::Container.generate)
@@ -130,7 +130,7 @@ begin
              options[:meta_file_only] || options[:verbose])
 
   # generate mimetype
-  # it's name and path are also fixed (./mimetype)
+  # it's path is also fixed (./mimetype)
   mimetype = File.new('mimetype', 'w')
   mimetype.write('application/epub+zip')
   mimetype.close
@@ -155,25 +155,24 @@ begin
   # generate uuid
   uuid = "%08x-" % Time.now.to_i + 
             [4,4,4,12].map {|l| "%0#{l}x" % rand(1 << l*4) }.join('-')
-  # require 'uuid'
   # uuid = UUID.new.generate
 
-  # generate opf file
+  # generate .opf file
   opf = File.new(Pubgen::Container.opf_path, 'w')
   opf.write(Pubgen::OPF.generate(yaml, uuid))
   opf.close
   pubgen_log("cat > " + Pubgen::Container.opf_path, 
              options[:meta_file_only] || options[:verbose])
-  # pubgen automatically added ncx file to opf's manifest (but not to yaml[]'s)
+  # pubgen automatically added .ncx file to opf's manifest
 
-  # generate ncx file
+  # generate .ncx file
   ncx = File.new(Pubgen::OPF.ncx_path, 'w')
   ncx.write(Pubgen::NCX.generate(yaml['metadata']['title'], yaml['toc'], uuid))
   ncx.close
   pubgen_log("cat > " + Pubgen::OPF.ncx_path, 
              options[:meta_file_only] || options[:verbose])
 
-  # generate epub
+  # make an epub
   if !options[:meta_file_only]
     Zip::Archive.open("pubgen.epub", Zip::CREATE | Zip::TRUNC) do |ar|
       Dir.glob('**/*').each do |path|
