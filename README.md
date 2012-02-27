@@ -112,7 +112,7 @@ spine:
 #
 # See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.4.1
 toc:
-# Don't forget the colon prefix to add sub items
+# Add a colon suffix to indent
   - 1 Music -- contents/a.html:
     - 1.1 Discography -- contents/a.html#discography: 
       - 1.1.1 Studio albums -- contents/a.html#studio_albums
