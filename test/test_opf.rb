@@ -73,7 +73,6 @@ class TestOPF < Test::Unit::TestCase
 
   def test_guide
     xml = Pubgen::OPF.generate($yaml, 'aaaaaaaa')
-
     assert_match(/reference href="contents\/a.html" type="toc"/, xml)
     assert_match(/reference href="contents\/b.html" type="title-page"/, xml)
     assert_match(/reference href="contents\/c.html" type="cover"/, xml)

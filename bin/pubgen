@@ -22,14 +22,12 @@ options = {}
 opts = OptionParser.new do |opts|
   opts.banner = HELP
 
-  opts.on('-o', '--output EPUB_PATH', 'Specify output epub file path') do |epub_path|
-    options[:epub_path] = epub_path
+  opts.on('-o', '--output EPUB_PATH', 'Specify output epub file path') do |p|
+    options[:epub_path] = p
   end
-
   opts.on('-m', '--meta-file-only', 'Generate .opf, .ncx, mimetype, ...') do |m|
     options[:meta_file_only] = m
   end
-
   opts.on('-v', '--verbose', 'Verbose output') do |v|
     options[:verbose] = v
   end

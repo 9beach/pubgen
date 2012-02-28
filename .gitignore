@@ -4,5 +4,5 @@ coverage
 doc
 pkg
 *.epub
-.rvmrc
+*.gem
 Gemfile.lock

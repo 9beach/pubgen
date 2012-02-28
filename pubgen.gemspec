@@ -9,12 +9,12 @@ Gem::Specification.new do |s|
   s.platform              = Gem::Platform::RUBY
   s.author                = "9beach"
   s.email                 = ["9beach@gmail.com"]
-  s.homepage              = "https://github.com/9beach/pubgen"
+  s.homepage              = "http://github.com/9beach/pubgen"
   s.files                 = `git ls-files`.split("\n")
   s.executables           = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.bindir                = 'bin'
   s.require_paths         = ["lib"]
   s.summary               = "command-line based epub generator"
-  s.description           = "Pubgen is a simple command-line based epub generator. With a plain YAML, Pubgen generate the epub for you."
+  s.description           = "Pubgen is a command-line based epub generator. Create an epub with YAML."
   s.add_dependency        "zipruby"
 end

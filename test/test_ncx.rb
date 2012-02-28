@@ -57,7 +57,6 @@ class TestNCX < Test::Unit::TestCase
 
   def test_generate
     xml = Pubgen::NCX.generate('English Patient', $yaml['toc'], '1111')
-
     assert_match(/<meta content="1111" name="dtb:uid"\/>/, xml)
     assert_match(/^    <navPoint id="d001" playOrder="1">/, xml)
     assert_match(/^      <content src="contents\/a.html"/, xml)

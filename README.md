@@ -1,7 +1,6 @@
 # Pubgen
 
-Pubgen is a command-line based epub generator. With a simple YAML, Pubgen make 
-a epub for you. 
+Pubgen is a command-line based epub generator. Create an epub with YAML.
 
 ## Installation
 
@@ -14,7 +13,7 @@ $ gem install pubgen
 
 ```bash
 $ pubgen -h
-pubgen, a epub generator. (http://github.com/9beach/pubgen)
+pubgen, an epub generator. (http://github.com/9beach/pubgen)
 
 Usage:
   pubgen <yaml file> [-o <epub file>] [-v]
@@ -45,7 +44,7 @@ $ find .
 ./style.css
 ```
 
-Create the utf-8 encoded YAML file describing the publication. As a example, 
+Create the utf-8 encoded YAML file describing the publication. As an example, 
 `will_oldham.yml`.
 
 ```yaml
