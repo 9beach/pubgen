@@ -25,10 +25,12 @@ Usage:
 ```
 
 ## Quick Start
+
+### Create an epub
  
 Prepare files (documents, images, style sheets, etc.) that make up the 
-publication. iBooks requires strict xhtml. [`tidy -asxhtml`] 
-(http://tidy.sourceforge.net/) will be helpful.
+publication. Apple's iBooks requires strict xhtml. [`tidy -asxhtml`] 
+(http://tidy.sourceforge.net/) will be helpful to you.
 
 ```bash
 $ find .
@@ -146,6 +148,27 @@ cd /path/to/prev_dir
 mv .pubgen-4f4a210e/pubgen.epub 'Will Oldham_ Wikipedia, the free encyclopedia.epub'
 rm -rf .pubgen-4f4a210e
 # Successfully generated 'Will Oldham_ Wikipedia, the free encyclopedia.epub'
+```
+
+Done!
+
+### Create meta files
+
+If you understand [Open Packagin Format 2.0.1] 
+(http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm) spec, and want to edit some 
+properties of the epub before packaging, you can try pubgen with 
+`--meta-file-only` option.
+
+```bash
+$ cd /path/to/epub_root
+$ pubgen will_oldham.yml -m
+cat > META-INF/container.xml
+cat > mimetype
+cat > cover-pubgen.xhtml
+cat > content.opf
+cat > toc.ncx
+# edit content.opf/toc.ncx, and then
+$ zip -r ../will_oldham.epub .
 ```
 
 Done!
