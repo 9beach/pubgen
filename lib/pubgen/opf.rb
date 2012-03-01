@@ -32,21 +32,21 @@ EOF
     module OPFImpl
       def self.guess_media_type(filename)
         case filename.downcase
-        when /.*\.x?html?$/i
+        when /.*\.x?html?$/
           'application/xhtml+xml'
-        when /.*\.css$/i
+        when /.*\.css$/
           'text/css'
         when /.*\.(jpeg|jpg)$/
           'image/jpeg'
-        when /.*\.png$/i
+        when /.*\.png$/
           'image/png'
-        when /.*\.gif$/i
+        when /.*\.gif$/
           'image/gif'
-        when /.*\.svg$/i
+        when /.*\.svg$/
           'image/svg+xml'
-        when /.*\.ncx$/i
+        when /.*\.ncx$/
           'application/x-dtbncx+xml'
-        when /.*\.opf$/i
+        when /.*\.opf$/
           'application/oebps-package+xml'
         else
           'application/octet-stream'
@@ -65,7 +65,7 @@ EOF
                   "yaml file"
           end
           id = "i%03d" % no
-          manifest_xml += "    <item id=\"#{id}\" href=\"#{path}\" " + 
+          manifest_xml << "    <item id=\"#{id}\" href=\"#{path}\" " + 
                           "media-type=\"#{guess_media_type(path)}\"/>\n"
           if path == cover_path
             cover_id = id
@@ -79,7 +79,7 @@ EOF
           raise "Failed to find cover-image from manifest" 
         end
 
-        manifest_xml += "    <item id=\"ncx\" href=\"#{OPF.ncx_path}\" " + 
+        manifest_xml << "    <item id=\"ncx\" href=\"#{OPF.ncx_path}\" " + 
                 "media-type=\"application/x-dtbncx+xml\"/>\n  </manifest>\n"
 
         return cover_id, manifest_xml, file2id
@@ -124,7 +124,7 @@ EOF
           if file2id[cover_page] == nil
             raise "Failed to find cover-page from manifest" 
           else
-            guide_xml += "    <reference href=\"#{cover_page}\" " + 
+            guide_xml << "    <reference href=\"#{cover_page}\" " + 
               "type=\"cover\" title=\"Cover\"/>\n"
           end
         end
@@ -133,7 +133,7 @@ EOF
           if file2id[toc_page] == nil
             raise "Failed to find toc-page from manifest" 
           else
-            guide_xml += "    <reference href=\"#{toc_page}\" type=\"toc\" " + 
+            guide_xml << "    <reference href=\"#{toc_page}\" type=\"toc\" " + 
               "title=\"Table of Contents\"/>\n"
           end
         end
@@ -142,23 +142,23 @@ EOF
           if file2id[title_page] == nil
             raise "Failed to find title-page from manifest" 
           else
-            guide_xml += "    <reference href=\"#{title_page}\" " + 
+            guide_xml << "    <reference href=\"#{title_page}\" " + 
               "type=\"title-page\" title=\"Title Page\"/>\n"
           end
         end
-        guide_xml += "  </guide>\n"
+        guide_xml << "  </guide>\n"
       end
 
       def self.get_spine_xml(spine, file2id)
         spine_xml = "  <spine toc=\"ncx\">\n"
         spine.each do |path|
           if file2id[path] != nil
-            spine_xml += "    <itemref idref=\"#{file2id[path]}\"/>\n"
+            spine_xml << "    <itemref idref=\"#{file2id[path]}\"/>\n"
           else
             raise "Failed to find spine element `#{path}' from manifest"
           end
         end
-        spine_xml += "  </spine>\n"
+        spine_xml << "  </spine>\n"
       end
     end
   end

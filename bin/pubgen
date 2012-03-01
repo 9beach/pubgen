@@ -9,12 +9,22 @@ require 'zipruby'
 $:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
 require 'pubgen'
 
+# just for one line log
+def pubgen_log(log, verbose = true)
+  $stdout << log + "\n" if verbose
+end
+
+def pubgen_err(err)
+  $stderr << '# ' + err + "\n"
+end
+
 HELP = <<EOF
-pubgen #{Pubgen::VERSION}, a epub generator. (http://github.com/9beach/pubgen)
+pubgen #{Pubgen::VERSION}, an epub generator. (http://github.com/9beach/pubgen)
 
 Usage:
   pubgen <yaml file> [-o <epub file>] [-v]
   pubgen <yaml file> -m
+  pubgen -t <toc file>
 
 EOF
 
@@ -22,35 +32,67 @@ options = {}
 opts = OptionParser.new do |opts|
   opts.banner = HELP
 
-  opts.on('-o', '--output EPUB_PATH', 'Specify output epub file path') do |p|
-    options[:epub_path] = p
+  opts.on('-o', '--output EPUB_FILE', 'Specify output epub file path') do |o|
+    options[:epub_path] = o
   end
-  opts.on('-m', '--meta-file-only', 'Generate .opf, .ncx, mimetype, ...') do |m|
-    options[:meta_file_only] = m
+  opts.on('-m', '--meta-file-only', 'Generate .opf, .ncx, mimetype, ...') do |o|
+    options[:meta_file_only] = o
   end
-  opts.on('-v', '--verbose', 'Verbose output') do |v|
-    options[:verbose] = v
+  opts.on('-t', '--toc TOC_FILE EPUB_ROOT', 'Print YAML using TOC file') do |o|
+    options[:toc_path] = o
+  end
+  opts.on('-v', '--verbose', 'Verbose output') do |o|
+    options[:verbose] = o
   end
 end
 opts.parse!(ARGV)
 
 # check options validity
-if (options[:meta_file_only] == true && options[:epub_path] != nil)
+option_count = 0
+option_count += 1 if options[:meta_file_only] == true
+option_count += 1 if options[:epub_path] != nil
+option_count += 1 if options[:toc_path] != nil
+
+if option_count > 1
   $stderr << <<EOF
-pubgen: `--meta-file-only' with `--output EPUB_PATH', not allowed
+pubgen: `--meta-file-only', `--output' and `--toc' options cannot be combined
 
 Try `pubgen -h' for more informations
 EOF
   exit 1
 end
 
+# special option. process it and exit
+if options[:toc_path] != nil
+  if ARGV.size != 1
+    $stderr << <<EOF
+pubgen: specify a epub root
+
+Try `pubgen -h' for more informations
+EOF
+    exit 1
+  else
+    options[:epub_root] = ARGV[0]
+  end
+
+  begin
+    puts Pubgen::YAML.generate(options[:epub_root], options[:toc_path])
+  rescue Exception=>e
+    $exit_code = 1
+    pubgen_err(e.to_s)
+    exit 1
+  end
+  exit 0
+end
+
+# now, options[:toc_path] == nil
 if ARGV.size != 1
   $stderr << <<EOF
 pubgen: specify a yaml file
 
 Try `pubgen -h' for more informations
 EOF
-  exit 1
+    exit 1
 else
   options[:yaml_path] = ARGV[0]
 end
@@ -75,15 +117,6 @@ if !options[:meta_file_only] && !options[:epub_path]
 end
 # options done
 
-# just for one line log
-def pubgen_log(log, verbose = true)
-  $stdout << log + "\n" if verbose
-end
-
-def pubgen_err(err)
-  $stderr << '# ' + err + "\n"
-end
-
 if yaml['metadata']['creator'] == nil
   yaml['metadata']['creator'] = "pubgen-#{Pubgen::VERSION}" 
 end
@@ -107,9 +140,9 @@ begin
       if Pubgen::OPF.valid_manifest_element?(file) == false
         raise "Invalid manifest (not in sub-directory of yaml file): " + file
       end
-      target_dir = "#{$tmpdir}/#{File.dirname(file)}"
+      target_dir = "#{File.join($tmpdir, File.dirname(file))}"
       FileUtils.mkdir_p(target_dir)
-      FileUtils.cp("#{File.dirname(options[:yaml_path])}/#{file}", 
+      FileUtils.cp("#{File.join(File.dirname(options[:yaml_path]), file)}", 
                    target_dir, :verbose=>options[:verbose])
     end
 
@@ -121,14 +154,14 @@ begin
   # generate container.xml 
   # it's path is fixed (META-INF/container.xml)
   Dir.mkdir('META-INF') if !File::directory?('META-INF')
-  container = File.new('META-INF/container.xml', 'w')
+  container = File.new(File.join('META-INF', 'container.xml'), 'w')
   container.write(Pubgen::Container.generate)
   container.close
-  pubgen_log('cat > META-INF/container.xml', 
+  pubgen_log("cat > #{File.join('META-INF', 'container.xml')}",
              options[:meta_file_only] || options[:verbose])
 
   # generate mimetype
-  # it's path is also fixed (./mimetype)
+  # it's path is also fixed (mimetype)
   mimetype = File.new('mimetype', 'w')
   mimetype.write('application/epub+zip')
   mimetype.close
@@ -186,9 +219,9 @@ begin
     # mv pubgen.epub to options[:epub_path]
     Dir.chdir($pwd_old)
     pubgen_log("cd " + $pwd_old, options[:verbose])
-    FileUtils.mv($tmpdir + "/pubgen.epub", options[:epub_path])
-    pubgen_log("mv #{$tmpdir}/pubgen.epub '#{options[:epub_path]}'", 
-               options[:verbose])
+    FileUtils.mv(File.join($tmpdir, 'pubgen.epub'), options[:epub_path])
+    pubgen_log("mv #{File.join($tmpdir, 'pubgen.epub')} " + 
+               "'#{options[:epub_path]}'", options[:verbose])
   end
 rescue Exception=>e
   $exit_code = 1

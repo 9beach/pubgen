@@ -21,10 +21,10 @@ EOF
       # NavPoint traces indentation, so we need class and instantiation of it
       nav_point = NavPointImpl.new
       toc.each do |name_and_path|
-        toc_xml += nav_point.generate(name_and_path)
+        toc_xml << nav_point.generate(name_and_path)
       end
       # footer
-      toc_xml += "  </navMap>\n</ncx>"
+      toc_xml << "  </navMap>\n</ncx>"
     end
 
     # define NavPointImpl class
@@ -65,12 +65,12 @@ EOF
             navpoint_xml = header % [@play_order, @play_order, 
               CGI.escapeHTML(key.split(" -- ")[0]), key.split(" -- ")[1]]
             value.each do |v|
-              navpoint_xml += generate_impl(v, depth + 1)
+              navpoint_xml << generate_impl(v, depth + 1)
             end
           end
         end
 
-        navpoint_xml += footer
+        navpoint_xml << footer
       end
 
       public

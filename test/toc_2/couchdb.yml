@@ -1,0 +1,65 @@
+# METADATA: Publication metadata (title, author, publisher, etc.).
+#
+# See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.2
+metadata:
+  title:
+  creator:
+  date:
+  language:
+  subject:
+  publisher:
+  contributor:
+  description:
+  source:
+  rights:
+  relation:
+
+# GUIDE: A set of references to fundamental structural features of the 
+# publication, such as table of contents, foreword, bibliography, etc.
+#
+# See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.6
+#
+# If you provide cover-image without cover-page, pubgen automatically 
+# generate cover-page xhtml, and add it to manifest and spine
+guide:
+  toc-page:
+  title-page: 
+  cover-page:
+  cover-image:
+
+# MANIFEST: A list of files (documents, images, style sheets, etc.) that make 
+# up the publication.
+#
+# See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.3
+manifest:
+  - foreword.html
+  - preface.html
+  - api.html
+  - why.html
+  - couchdb.html
+  - tour.html
+  - consistency.html
+
+# SPINE: An arrangement of documents providing a linear reading order.
+#
+# See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.4
+spine:
+  - preface.html
+  - why.html
+  - consistency.html
+  - tour.html
+  - api.html
+# You need to reorder spine elements below. They are not in TOC but in 
+manifest.
+  - foreword.html
+  - couchdb.html
+
+# TOC: Table of contents
+#
+# See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.4.1
+toc:
+  - Preface -- preface.html
+  - 1. Why CouchDB? -- why.html
+  - 2. Eventual Consistency -- consistency.html
+  - 3. Getting Started -- tour.html
+  - 4. The Core API -- api.html
