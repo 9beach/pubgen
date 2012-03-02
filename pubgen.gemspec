@@ -17,4 +17,5 @@ Gem::Specification.new do |s|
   s.summary               = "command-line based epub generator"
   s.description           = "Pubgen is a command-line based epub generator. Make an epub with YAML."
   s.add_dependency        "zipruby"
+  s.add_dependency        "hpricot"
 end

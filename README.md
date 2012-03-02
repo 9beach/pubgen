@@ -151,13 +151,13 @@ cat > mimetype
 cat > cover-pubgen.xhtml
 cat > content.opf
 cat > toc.ncx
-# Edit content.opf/toc.ncx, and then
+# Edit content.opf/toc.ncx, and archive epub with zip command
 $ zip -r ../will_oldham.epub .
 ```
 
 ### Generate YAML using TOC file
 
-Pubgen generates a YAML using TOC html.
+Pubgen generates a YAML using TOC file.
 
 ```bash
 $ pubgen -t <epub root>/contents/toc.html <epub root> > out.yml

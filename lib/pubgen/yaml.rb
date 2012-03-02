@@ -5,7 +5,7 @@ require 'cgi'
 # generate yaml using index.html
 module Pubgen
   module YAML
-    def self.generate(epub_root, index_html)
+    def self.generate(epub_root, toc_html)
       rpathmap = {}
       manifest = <<EOF
 # METADATA: Publication metadata (title, author, publisher, etc.).
@@ -32,7 +32,7 @@ metadata:
 # If you provide cover-image without cover-page, pubgen automatically 
 # generate cover-page xhtml, and add it to manifest and spine.
 guide:
-  toc-page:
+  toc-page: #{subpath2basepath(toc_html, epub_root)}
   title-page: 
   cover-page:
   cover-image:
@@ -64,19 +64,19 @@ EOF
 # See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.4.1
 toc:
 EOF
-      doc = Hpricot(open(index_html))
+      doc = Hpricot(open(toc_html))
       spinemap = {}
       linkmap = {}
       doc.search("a[@href]").each do |a| 
         href = a['href']
         if href[0] == '#' # index.html's anchor
-          href = File.basename(index_html) + href
+          href = File.basename(toc_html) + href
         end
         path, anchor = href.split("#")
 
         # href is relative to index.html, so we need to change it relative to
         # epub_root
-        abspath = File.absolute_path(File.join(File.dirname(index_html), path))
+        abspath = File.absolute_path(File.join(File.dirname(toc_html), path))
         rpath = subpath2basepath(abspath, epub_root)
         next if rpath == nil
         # toc paths should be sub-set of manifest

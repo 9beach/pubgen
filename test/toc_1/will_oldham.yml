@@ -22,7 +22,7 @@ metadata:
 # If you provide cover-image without cover-page, pubgen automatically 
 # generate cover-page xhtml, and add it to manifest and spine.
 guide:
-  toc-page:
+  toc-page: will_oldham.html
   title-page: 
   cover-page:
   cover-image:
