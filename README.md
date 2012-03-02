@@ -130,26 +130,8 @@ toc:
 Run pubgen.
 
 ```bash
-$ pubgen <epub root>/will_oldham.yml -v
-mkdir .pubgen-4f4a210e
-cp ./contents/a.html .pubgen-4f4a210e/contents
-cp ./contents/b.html .pubgen-4f4a210e/contents
-cp ./images/cover.jpg .pubgen-4f4a210e/images
-cp ./images/1.jpg .pubgen-4f4a210e/images
-cp ./images/2.jpg .pubgen-4f4a210e/images
-cp ./images/3.jpg .pubgen-4f4a210e/images
-cp ./style.css .pubgen-4f4a210e/.
-cd .pubgen-4f4a210e
-cat > META-INF/container.xml
-cat > mimetype
-cat > cover-pubgen.xhtml
-cat > content.opf
-cat > toc.ncx
-zip > pubgen.epub
-cd <epub root>
-mv .pubgen-4f4a210e/pubgen.epub 'Will Oldham_ Wikipedia, the free encyclopedia.epub'
-rm -rf .pubgen-4f4a210e
-# Successfully generated 'Will Oldham_ Wikipedia, the free encyclopedia.epub'
+$ pubgen <epub root>/will_oldham.yml -o out.epub
+zip > out.epub
 ```
 
 Done!
