@@ -30,7 +30,7 @@ metadata:
 # See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.6
 #
 # If you provide cover-image without cover-page, pubgen automatically 
-# generate cover-page xhtml, and add it to manifest and spine
+# generate cover-page xhtml, and add it to manifest and spine.
 guide:
   toc-page:
   title-page: 
@@ -107,7 +107,7 @@ EOF
         if /.*\.x?html?$/ =~ k
           if spine_comment == false
             spine_comment = true
-            spine << "# You need to reorder spine elements below. They are not in TOC but in \nmanifest.\n"
+            spine << "# You need to reorder below elements. They are not in TOC but in manifest.\n"
           end
           spine << "  - #{k}\n"
         end

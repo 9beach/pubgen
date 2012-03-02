@@ -13,14 +13,16 @@ $ gem install pubgen
 
 ```bash
 $ pubgen -h
-pubgen, an epub generator. (http://github.com/9beach/pubgen)
+pubgen 0.2.0, an epub generator. (http://github.com/9beach/pubgen)
 
 Usage:
   pubgen <yaml file> [-o <epub file>] [-v]
   pubgen <yaml file> -m
+  pubgen -t <toc file> <epub root path>
 
-    -o, --output EPUB_PATH           Specify output epub file path
+    -o, --output EPUB_FILE           Specify output epub file path
     -m, --meta-file-only             Generate .opf, .ncx, mimetype, ...
+    -t, --toc TOC_FILE EPUB_ROOT     Print YAML using TOC file
     -v, --verbose                    Verbose output
 ```
 
@@ -72,7 +74,7 @@ metadata:
 # See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.6
 #
 # If you provide cover-image without cover-page, pubgen automatically 
-# generate cover-page xhtml, and add it to manifest and spine
+# generate cover-page xhtml, and add it to manifest and spine.
 guide:
   toc-page:
   title-page: 
@@ -128,7 +130,7 @@ toc:
 Run pubgen.
 
 ```bash
-$ pubgen /path/to/will_oldham.yml -v
+$ pubgen <epub root>/will_oldham.yml -v
 mkdir .pubgen-4f4a210e
 cp ./contents/a.html .pubgen-4f4a210e/contents
 cp ./contents/b.html .pubgen-4f4a210e/contents
@@ -144,7 +146,7 @@ cat > cover-pubgen.xhtml
 cat > content.opf
 cat > toc.ncx
 zip > pubgen.epub
-cd /path/to/prev_dir
+cd <epub root>
 mv .pubgen-4f4a210e/pubgen.epub 'Will Oldham_ Wikipedia, the free encyclopedia.epub'
 rm -rf .pubgen-4f4a210e
 # Successfully generated 'Will Oldham_ Wikipedia, the free encyclopedia.epub'
@@ -160,7 +162,7 @@ properties of the epub before packaging, you can try pubgen with
 `--meta-file-only` option.
 
 ```bash
-$ cd /path/to/epub_root
+$ cd <epub root>
 $ pubgen will_oldham.yml -m
 cat > META-INF/container.xml
 cat > mimetype
@@ -171,4 +173,15 @@ cat > toc.ncx
 $ zip -r ../will_oldham.epub .
 ```
 
-Done!
+### Generate YAML using TOC file
+
+Pubgen generates a YAML using TOC html.
+
+```bash
+$ pubgen -t <epub root>/contents/toc.html <epub root> > out.yml
+# out.yml is not complete, but is probably quite useful.
+$ vi out.yml # Edit out.yml
+$ cp out.yml <epub root>
+$ pubgen <epub root>/out.yml -o out.epub
+zip > out.epub
+```

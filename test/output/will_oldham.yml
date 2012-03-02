@@ -1,6 +1,3 @@
-# METADATA: Publication metadata (title, author, publisher, etc.).
-#
-# See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.2
 metadata:
   title: "Will Oldham: Wikipedia, the free encyclopedia"
   creator: Wikipedia
@@ -14,33 +11,12 @@ metadata:
   rights:
   relation:
 
-# GUIDE: A set of references to fundamental structural features of the 
-# publication, such as table of contents, foreword, bibliography, etc.
-#
-# See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.6
-#
-# If you provide cover-image without cover-page, pubgen automatically 
-# generate cover-page xhtml, and add it to manifest and spine
 guide:
   toc-page:
   title-page: 
   cover-page:
   cover-image: images/cover.jpg
 
-# MANIFEST: A list of files (documents, images, style sheets, etc.) that make 
-# up the publication.
-#
-# See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.3
-#
-# All the file paths in manifest ought to be relative to yaml's path and in the
-# same or sub-directory of yaml. Say yaml's path is /book/a.yaml.
-# - a/b/c.html                # good. in the sub-directory
-# - d.jpg                     # good. in the same directory
-# - ./e.jpg                   # good. in the same directory
-# - /a/b/c.html               # bad. in the different directory
-# - ../d.png                  # bad. in the parent directory
-# - /book/e.html              # bad. although in the same directory
-# - ../book/f.png             # bad. although in the same directory
 manifest:
   - contents/a.html
   - contents/b.html
@@ -50,18 +26,11 @@ manifest:
   - images/3.jpg
   - style.css
 
-# SPINE: An arrangement of documents providing a linear reading order.
-#
-# See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.4
 spine:
   - contents/a.html
   - contents/b.html
 
-# TOC: Table of contents
-#
-# See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.4.1
 toc:
-# Add a colon suffix to indent
   - 1 Music -- contents/a.html:
     - 1.1 Discography -- contents/a.html#discography: 
       - 1.1.1 Studio albums -- contents/a.html#studio_albums

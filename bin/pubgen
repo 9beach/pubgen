@@ -18,19 +18,19 @@ def pubgen_err(err)
   $stderr << '# ' + err + "\n"
 end
 
-HELP = <<EOF
+help = <<EOF
 pubgen #{Pubgen::VERSION}, an epub generator. (http://github.com/9beach/pubgen)
 
 Usage:
   pubgen <yaml file> [-o <epub file>] [-v]
   pubgen <yaml file> -m
-  pubgen -t <toc file>
+  pubgen -t <toc file> <epub root path>
 
 EOF
 
 options = {}
 opts = OptionParser.new do |opts|
-  opts.banner = HELP
+  opts.banner = help
 
   opts.on('-o', '--output EPUB_FILE', 'Specify output epub file path') do |o|
     options[:epub_path] = o
@@ -54,31 +54,29 @@ option_count += 1 if options[:epub_path] != nil
 option_count += 1 if options[:toc_path] != nil
 
 if option_count > 1
-  $stderr << <<EOF
-pubgen: `--meta-file-only', `--output' and `--toc' options cannot be combined
-
-Try `pubgen -h' for more informations
-EOF
+  $stderr << "pubgen: `--meta-file-only', `--output' and `--toc' " << 
+             "options cannot be combined\n\n" <<
+             "Try `pubgen -h' for more informations\n"
   exit 1
 end
 
-# special option. process it and exit
-if options[:toc_path] != nil
-  if ARGV.size != 1
-    $stderr << <<EOF
-pubgen: specify a epub root
-
-Try `pubgen -h' for more informations
-EOF
-    exit 1
+if ARGV.size != 1
+  if options[:toc_path] != nil
+    $stderr << "pubgen: specify a epub root path\n\n" << 
+               "Try `pubgen -h' for more informations\n"
   else
-    options[:epub_root] = ARGV[0]
+    $stderr << "pubgen: specify a yaml file\n\n" << 
+               "Try `pubgen -h' for more informations\n"
   end
-
+  exit 1
+end
+ 
+# `--toc' option. process it and exit
+if options[:toc_path] != nil
+  options[:epub_root] = ARGV[0]
   begin
-    puts Pubgen::YAML.generate(options[:epub_root], options[:toc_path])
+    $stdout << Pubgen::YAML.generate(options[:epub_root], options[:toc_path])
   rescue Exception=>e
-    $exit_code = 1
     pubgen_err(e.to_s)
     exit 1
   end
@@ -86,16 +84,7 @@ EOF
 end
 
 # now, options[:toc_path] == nil
-if ARGV.size != 1
-  $stderr << <<EOF
-pubgen: specify a yaml file
-
-Try `pubgen -h' for more informations
-EOF
-    exit 1
-else
-  options[:yaml_path] = ARGV[0]
-end
+options[:yaml_path] = ARGV[0]
 
 begin
   yaml = YAML::load File.open(options[:yaml_path])

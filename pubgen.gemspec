@@ -15,6 +15,6 @@ Gem::Specification.new do |s|
   s.bindir                = 'bin'
   s.require_paths         = ["lib"]
   s.summary               = "command-line based epub generator"
-  s.description           = "Pubgen is a command-line based epub generator. Create an epub with YAML."
+  s.description           = "Pubgen is a command-line based epub generator. Make an epub with YAML."
   s.add_dependency        "zipruby"
 end

@@ -10,16 +10,16 @@ module Pubgen
       cover_id, manifest_xml, file2id = 
         OPFImpl.get_cover_id_and_manifest_xml(yaml['guide']['cover-image'], 
                                               yaml['manifest'])
-      metadata_xml = OPFImpl.get_metadata_xml(yaml['metadata'], uuid, cover_id)
-      spine_xml = OPFImpl.get_spine_xml(yaml['spine'], file2id)
-      guide_xml = OPFImpl.get_guide_xml(yaml['guide'], file2id)
-
-      <<EOF
+      header = <<EOF
 <?xml version='1.0' encoding='utf-8'?>
 <package xmlns="http://www.idpf.org/2007/opf" version="2.0" \
 unique-identifier="uuid_id">
-#{metadata_xml}#{manifest_xml}#{spine_xml}#{guide_xml}</package>
 EOF
+      header << OPFImpl.get_metadata_xml(yaml['metadata'], uuid, cover_id) << 
+                manifest_xml <<
+                OPFImpl.get_spine_xml(yaml['spine'], file2id) << 
+                OPFImpl.get_guide_xml(yaml['guide'], file2id) << 
+                '</package>'
     end
 
     # sub directories and relative paths
