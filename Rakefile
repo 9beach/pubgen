@@ -10,12 +10,17 @@ Rake::TestTask.new('test_units') do |t|
   # t.verbose = true
 end
 
-$tmpdir = '.rake_test'
+def sh_exec(cmd)
+  %x[#{cmd}]
+  raise "Failed: #{cmd}" unless $?.success?
+end
 
 def sh_exec_failure(cmd)
   %x[#{cmd} > /dev/null 2>&1]
   raise "Not failed: #{cmd}" if $?.success?
 end
+
+$tmpdir = '.rake_test'
 
 task :test_bad_options => :test_toc_2 do |t|
   $stdout << "# task: #{t} => "
@@ -27,11 +32,6 @@ task :test_bad_options => :test_toc_2 do |t|
   sh_exec_failure("bin/pubgen -o")
   sh_exec_failure("bin/pubgen -t")
   puts "done!"
-end
-
-def sh_exec(cmd)
-  %x[#{cmd}]
-  raise "Failed: #{cmd}" unless $?.success?
 end
 
 task :test_toc_2 => :test_toc_1 do |t|
