@@ -1,5 +1,6 @@
 module Pubgen
   module NCX
+    # Generates the NCX XML.
     def self.generate(title, toc, uuid)
       # header
       toc_xml = <<EOF
@@ -27,8 +28,7 @@ EOF
       toc_xml << "  </navMap>\n</ncx>"
     end
 
-    # define NavPointImpl class
-    # it's private. only Pubgen.NCX.generate use it
+    # Defines private class. Only Pubgen::NCX.generate use it.
     class NavPointImpl
       private
       def generate_impl(name_and_path, depth)

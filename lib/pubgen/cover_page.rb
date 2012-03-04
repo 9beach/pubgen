@@ -1,5 +1,6 @@
 module Pubgen
   module CoverPage
+    # Generates the cover page XHTML.
     def self.generate(cover_image)
       <<EOF
 <?xml version='1.0' encoding='utf-8'?>

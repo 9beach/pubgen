@@ -2,10 +2,12 @@ require 'cgi'
 
 module Pubgen
   module OPF
+    # Returns opf file path.
     def self.ncx_path
       'toc.ncx'
     end
 
+    # Generates the OPF XML.
     def self.generate(yaml, uuid)
       cover_id, manifest_xml, file2id = 
         OPFImpl.get_cover_id_and_manifest_xml(yaml['guide']['cover-image'], 
@@ -22,13 +24,12 @@ EOF
                 '</package>'
     end
 
-    # sub directories and relative paths
+    # Checks if element is sub directories and relative paths form
     def self.valid_manifest_element?(e)
       e[0..2] != "../" && e[0] != "/"
     end
 
-    # define OPFImpl class
-    # it's private. only Pubgen.OPF.generate use it
+    # Defines private class. Only Pubgen::OPF.generate use it.
     module OPFImpl
       def self.guess_media_type(filename)
         case filename.downcase

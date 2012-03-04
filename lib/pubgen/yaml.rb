@@ -2,9 +2,9 @@ require 'rubygems'
 require 'hpricot'
 require 'cgi'
 
-# generate yaml using index.html
 module Pubgen
   module YAML
+    # Generates the YAML using input toc file.
     def self.generate(epub_root, toc_html)
       rpathmap = {}
       manifest = <<EOF
@@ -107,7 +107,8 @@ EOF
         if /.*\.x?html?$/ =~ k
           if spine_comment == false
             spine_comment = true
-            spine << "# You need to reorder below elements. They are not in TOC but in manifest.\n"
+            spine << "# You need to reorder below elements. They are not " << 
+                     "in TOC but in manifest.\n"
           end
           spine << "  - #{k}\n"
         end
@@ -116,6 +117,7 @@ EOF
       return "#{manifest}\n#{spine}\n#{toc}"
     end
 
+    # Returns relative path of input path to base_pase. It's a private method.
     def self.subpath2basepath(path, base_path)
       if File.absolute_path(path).include?(File.absolute_path(base_path))
         return File.absolute_path(path)[
