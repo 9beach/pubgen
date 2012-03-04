@@ -157,12 +157,12 @@ $ zip -r ../will_oldham.epub .
 
 ### Generate YAML using TOC file
 
-Pubgen generates a YAML using TOC file.
+Pubgen generates a YAML using TOC file. Pubgen-generated YAML is not complete, 
+but is probably quite useful.
 
 ```bash
 $ pubgen -t <epub root>/contents/toc.html <epub root> > out.yml
-# out.yml is not complete, but is probably quite useful.
-$ vi out.yml # Edit out.yml
+$ vi out.yml # Open and complete YAML
 $ cp out.yml <epub root>
 $ pubgen <epub root>/out.yml -o out.epub
 zip > out.epub
