@@ -2,7 +2,7 @@ require 'cgi'
 
 module Pubgen
   module OPF
-    # Returns opf file path.
+    # Returns the NCX file path.
     def self.ncx_path
       'toc.ncx'
     end

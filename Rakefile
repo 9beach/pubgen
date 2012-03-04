@@ -80,6 +80,6 @@ end
 task :push_gem => :build_gem do
   $:.push File.expand_path("../lib", __FILE__)
   require "pubgen/version"
-  sh "gem push pubgen-#{Pubgen::VERSION}"
+  sh "gem push pubgen-#{Pubgen::VERSION}.gem"
 end
 

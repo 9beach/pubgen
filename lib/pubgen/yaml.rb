@@ -117,7 +117,7 @@ EOF
       return "#{manifest}\n#{spine}\n#{toc}"
     end
 
-    # Returns relative path of input path to base_pase. It's a private method.
+    # Returns the relative path of input path to base_pase. It's private.
     def self.subpath2basepath(path, base_path)
       if File.absolute_path(path).include?(File.absolute_path(base_path))
         return File.absolute_path(path)[
