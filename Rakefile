@@ -15,7 +15,7 @@ def sh_echo_off(cmd)
   raise "Failed: #{cmd}" unless $?.success?
 end
 
-def sh_echo_off_failure(cmd)
+def sh_failure_echo_off(cmd)
   %x[#{cmd} > /dev/null 2>&1]
   raise "Not failed: #{cmd}" if $?.success?
 end
@@ -24,13 +24,13 @@ $tmpdir = '.rake_test'
 
 task :test_bad_options => :test_toc_2 do |t|
   $stdout << "# task: #{t} => "
-  sh_echo_off_failure("bin/pubgen -t x.html -o a.epub")
-  sh_echo_off_failure("bin/pubgen -t x.html -m")
-  sh_echo_off_failure("bin/pubgen -o x.epub -m")
-  sh_echo_off_failure("bin/pubgen")
-  sh_echo_off_failure("bin/pubgen -t x.html")
-  sh_echo_off_failure("bin/pubgen -o")
-  sh_echo_off_failure("bin/pubgen -t")
+  sh_failure_echo_off("bin/pubgen -t x.html -o a.epub")
+  sh_failure_echo_off("bin/pubgen -t x.html -m")
+  sh_failure_echo_off("bin/pubgen -o x.epub -m")
+  sh_failure_echo_off("bin/pubgen")
+  sh_failure_echo_off("bin/pubgen -t x.html")
+  sh_failure_echo_off("bin/pubgen -o")
+  sh_failure_echo_off("bin/pubgen -t")
   puts "done!"
 end
 

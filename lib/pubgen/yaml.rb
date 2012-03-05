@@ -76,7 +76,7 @@ EOF
 
         # href is relative to index.html, so we need to change it relative to
         # epub_root
-        abspath = File.absolute_path(File.join(File.dirname(toc_html), path))
+        abspath = File.expand_path(File.join(File.dirname(toc_html), path))
         rpath = subpath2basepath(abspath, epub_root)
         next if rpath == nil
         # toc paths should be sub-set of manifest
@@ -119,9 +119,9 @@ EOF
 
     # Returns the relative path of input path to base_pase. It's private.
     def self.subpath2basepath(path, base_path)
-      if File.absolute_path(path).include?(File.absolute_path(base_path))
-        return File.absolute_path(path)[
-          File.absolute_path(base_path).size + 1..-1]
+      if File.expand_path(path).include?(File.expand_path(base_path))
+        return File.expand_path(path)[
+          File.expand_path(base_path).size + 1..-1]
       else
         return nil
       end

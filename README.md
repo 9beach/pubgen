@@ -74,7 +74,7 @@ metadata:
 # See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.6
 #
 # If you provide cover-image without cover-page, pubgen automatically 
-# generate cover-page xhtml, and add it to manifest and spine.
+# generates cover-page xhtml, and add it to manifest and spine.
 guide:
   toc-page:
   title-page: 
@@ -87,7 +87,7 @@ guide:
 # See http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.3
 #
 # All the file paths in manifest ought to be relative to yaml's path and in the
-# same or sub-directory of yaml. Say yaml's path is /book/a.yaml.
+# same or sub-directory of yaml file. Say yaml's path is /book/a.yaml.
 # - a/b/c.html                # good. in the sub-directory
 # - d.jpg                     # good. in the same directory
 # - ./e.jpg                   # good. in the same directory
