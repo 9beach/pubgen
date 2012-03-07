@@ -44,6 +44,8 @@ task :test_toc_2 => :test_toc_1 do |t|
   o_yml = "#{$tmpdir}/.out.yml"
   sh_echo_off("bin/pubgen -t #{$tmpdir}/couchdb.html #{$tmpdir} > #{o_yml}")
   sh_echo_off("diff test/toc_2/couchdb.yml #{o_yml}")
+  require 'yaml'
+  YAML::load File.open(o_yml)
   sh_echo_off("rm -rf #{$tmpdir}")
   puts "done!"
 end
@@ -54,6 +56,8 @@ task :test_toc_1 => :test_output do |t|
   o_yml = "#{$tmpdir}/.out.yml"
   sh_echo_off("bin/pubgen -t test/toc_1/will_oldham.html test/toc_1 > #{o_yml}")
   sh_echo_off("diff test/toc_1/will_oldham.yml #{o_yml}")
+  require 'yaml'
+  YAML::load File.open(o_yml)
   sh_echo_off("rm -rf #{$tmpdir}")
   puts "done!"
 end
