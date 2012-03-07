@@ -89,11 +89,12 @@ EOF
         link = rpath + (anchor ? '#' + anchor : '')
         next if linkmap[link] == true
         linkmap[link] = true
-        if text.include?(':')
-          toc << "  - \"#{text} -- #{link}\"\n"
-        else
-          toc << "  - #{text} -- #{link}\n"
+        e = "#{text} -- #{link}"
+        # make text YAML friendly 
+        if e =~ /[:"'\\\[\]]/
+          e = e.gsub(/\\/, "\\\\\\\\").gsub(/"/, '\\"')
         end
+        toc << "  - \"#{e}\"\n"
         # add it to spine map
         spinemap[rpath] = true
       end
