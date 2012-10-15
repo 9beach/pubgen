@@ -38,8 +38,8 @@ publication. Apple's iBooks requires strict xhtml. [`tidy -asxhtml`]
 $ find .
 .
 ./contents
-./contents/a.html
-./contents/b.html
+./contents/x.html
+./contents/y.html
 ./images
 ./images/1.jpg
 ./images/2.jpg
@@ -47,7 +47,12 @@ $ find .
 ./images/cover.jpg
 ./style.css
 ```
-
+Make your files XHTML compatible.
+```
+$ cd contents
+$ tidy -asxhtml x.html > a.html
+$ tidy -asxhtml y.html > b.html
+```
 Create the utf-8 encoded YAML file describing the publication. As an example, 
 `will_oldham.yml`.
 
